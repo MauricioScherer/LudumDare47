@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -14,9 +15,34 @@ public class GameManager : MonoBehaviour
 
     public GameObject[] fechamento;
 
+    public GameObject pause;
+
     private void Awake()
     {
         Instance = this;
+    }
+
+    private void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.Escape))
+        {
+            if(!pause.activeSelf)
+            {
+                pause.SetActive(true);
+                Time.timeScale = 0.0f;
+            }
+            else
+            {
+                pause.SetActive(false);
+                Time.timeScale = 1.0f;
+            }
+        }
+    }
+
+    public void ReturnPause()
+    {
+        pause.SetActive(false);
+        Time.timeScale = 1.0f;
     }
 
     public void PlaySoundEffect(int p_clip)
@@ -59,5 +85,10 @@ public class GameManager : MonoBehaviour
     {
         fechamento[p_sala - 1].SetActive(false);
         fechamento[p_sala].SetActive(true);
+    }
+
+    public void LoadLevel(int p_value)
+    {
+        SceneManager.LoadScene(p_value);
     }
 }

@@ -24,6 +24,7 @@ public class ButtonController : MonoBehaviour
                 else
                 {
                     door.GetComponent<Door>().Open(true);
+                    GameManager.Instance.PlaySoundEffect(1);
                     GameManager.Instance.ViewFechamento(numeroSala);
                 }
             }

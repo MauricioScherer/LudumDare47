@@ -57,6 +57,11 @@ public class Player : MonoBehaviour
         {
             pressSpaceBtn.SetActive(true);
         }
+
+        if (other.CompareTag("FinalLevel"))
+        {
+            GameManager.Instance.LoadLevel(2);
+        }
     }
 
     private void OnTriggerExit(Collider other)
