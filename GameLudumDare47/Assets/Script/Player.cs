@@ -4,19 +4,17 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    private float xRotation = 0.0f;
     private CharacterController character;
     private bool isMove = true;
-
-    [Header("Head")]
-    public Transform head;
-    public float mouseSensibility;
-
-    [Header("Body")]
-    public float speed;
-
-    public float gravity = -9.81f;
     private Vector3 velocity;
+
+    public float speed;
+    public float gravity = -9.81f;
+    public float speedRotation;
+    public Animator animPLayer;
+
+    public GameObject cameraHead;
+    public GameObject pressSpaceBtn;
 
     private void Start()
     {
@@ -27,29 +25,21 @@ public class Player : MonoBehaviour
     {
         if(isMove)
         {
-            #region MouseRotation
-            float mouseX = Input.GetAxis("Mouse X") * mouseSensibility * Time.deltaTime;
-            float mouseY = Input.GetAxis("Mouse Y") * mouseSensibility * Time.deltaTime;
+            //rotation player
+            float rotX = Input.GetAxis("Horizontal") * speedRotation * Time.deltaTime;
+            transform.Rotate(Vector3.up * rotX);
 
-            xRotation -= mouseY;
-            xRotation = Mathf.Clamp(xRotation, -90.0f, 90.0f);
-
-            head.localRotation = Quaternion.Euler(xRotation, 0.0f, 0.0f);
-            transform.Rotate(Vector3.up * mouseX);
-            #endregion
-
-            #region InputAxis
-            float x = Input.GetAxis("Horizontal");
-            float z = Input.GetAxis("Vertical");
-
-            Vector3 move = transform.right * x + transform.forward * z;
-            character.Move(move * speed * Time.deltaTime);
-            #endregion
-
-            if (character.isGrounded && velocity.y < 0)
+            if(character.isGrounded)
             {
-                velocity.y = -2.0f;
+                float z = Input.GetAxis("Vertical");
+                Vector3 move = transform.forward * z;
+                character.Move(move * speed * Time.deltaTime);
+
+                animPLayer.SetFloat("speed", z);
             }
+
+            if (character.isGrounded && velocity.y < 0)            
+                velocity.y = -2.0f;           
 
             velocity.y += gravity * Time.deltaTime;
             character.Move(velocity * Time.deltaTime);
@@ -60,13 +50,33 @@ public class Player : MonoBehaviour
     {
         if (other.CompareTag("Loop"))
         {
-            isMove = false;
             GameManager.Instance.ResetPlayer();
+        }
+
+        if(other.CompareTag("Buttons"))
+        {
+            pressSpaceBtn.SetActive(true);
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Buttons"))
+        {
+            pressSpaceBtn.SetActive(false);
         }
     }
 
     public void SetIsMove()
     {
         isMove = !isMove;
+    }
+
+    public void ActiveView(GameObject p_otherButtons)
+    {
+        cameraHead.SetActive(!cameraHead.activeSelf);
+        SetIsMove();
+
+        p_otherButtons.SetActive(!p_otherButtons.activeSelf);
     }
 }

@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - Loop
+  - Door
+  - Buttons
   layers:
   - Default
   - TransparentFX
@@ -14,8 +16,8 @@ TagManager:
   - UI
   - 
   - 
-  - 
-  - 
+  - PostProcessing
+  - PostProcessing2
   - 
   - 
   - 

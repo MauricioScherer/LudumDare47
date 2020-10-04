@@ -10,14 +10,13 @@ public class GameManager : MonoBehaviour
     public AudioSource soundEffect;
 
     public GameObject player;
-    public Transform respawnPosition;
+    public GameObject respawnPosition;
+
+    public GameObject[] fechamento;
 
     private void Awake()
     {
         Instance = this;
-
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
     }
 
     public void PlaySoundEffect(int p_clip)
@@ -32,13 +31,33 @@ public class GameManager : MonoBehaviour
         soundEffect.clip = clip[0];
         soundEffect.Play();
 
-        player.GetComponent<Transform>().position = respawnPosition.position;
-        player.GetComponent<Transform>().rotation = respawnPosition.rotation;
+        //reset door status
+        GameObject[] doors = GameObject.FindGameObjectsWithTag("Door");
+        foreach (GameObject thisDoor in doors)
+        {
+            if(thisDoor.GetComponent<Door>())
+                thisDoor.GetComponent<Door>().Open(false);
+        }
+
+        //fechamentos
+        foreach (GameObject fechamentoCurrent in fechamento)
+            fechamentoCurrent.SetActive(false);
+        fechamento[0].SetActive(true);
+
+        player.GetComponent<Player>().SetIsMove();
+        player.GetComponent<Transform>().position = respawnPosition.GetComponent<Transform>().position;
+        player.GetComponent<Transform>().rotation = respawnPosition.GetComponent<Transform>().rotation;
         Invoke("ResetMovePLayer", 0.2f);
     }
 
     private void ResetMovePLayer()
     {
         player.GetComponent<Player>().SetIsMove();
+    }
+
+    public void ViewFechamento(int p_sala)
+    {
+        fechamento[p_sala - 1].SetActive(false);
+        fechamento[p_sala].SetActive(true);
     }
 }
